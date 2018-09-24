@@ -4,27 +4,30 @@ module Bosh::OpenStackCloud
 
     REGISTRY_KEY_TAG = :registry_key
 
-    def initialize(agent_properties, human_readable_vm_names, logger, openstack, registry, use_dhcp)
+    def initialize(agent_properties, human_readable_vm_names, logger, openstack, registry, use_dhcp, cpi_api_version, stemcell_api_version)
       @agent_properties = agent_properties
       @human_readable_vm_names = human_readable_vm_names
       @logger = logger
       @openstack = openstack
       @registry = registry
       @use_dhcp = use_dhcp
+      @cpi_api_version = cpi_api_version
+      @stemcell_api_version = stemcell_api_version
     end
 
     attr_reader :use_dhcp
 
-    def create(
-      agent_settings,
-      network_configurator,
-      resource_pool, create_vm_params
-    )
-
+    def create(agent_settings, network_configurator, resource_pool, create_vm_params)
       create_vm_params = create_vm_params.dup
 
       begin
-        pick_nics(create_vm_params, network_configurator)
+        nics = network_configurator.nics
+        @logger.debug("Using NICs: `#{nics.join(', ')}'")
+        create_vm_params[:nics] = nics
+        create_vm_params[:user_data] = JSON.dump(
+          user_data(create_vm_params[:name], network_configurator.network_spec, agent_settings),
+        )
+
         server = create_server(create_vm_params)
         configure_server(network_configurator, server)
 
@@ -64,13 +67,6 @@ module Bosh::OpenStackCloud
     end
 
     private
-
-    def pick_nics(create_vm_params, network_configurator)
-      nics = network_configurator.nics
-      @logger.debug("Using NICs: `#{nics.join(', ')}'")
-      create_vm_params[:nics] = nics
-      create_vm_params[:user_data] = JSON.dump(user_data(create_vm_params[:name], network_configurator.network_spec))
-    end
 
     def create_server(create_vm_params)
       @logger.debug("Using boot params: `#{Bosh::Cpi::Redactor.clone_and_redact(create_vm_params, 'user_data').inspect}'")
@@ -150,16 +146,21 @@ module Bosh::OpenStackCloud
     # @param [String] registry_key used by agent to look up settings from registry
     # @param [Hash] network_spec network specification
     # @return [Hash] server user data
-    def user_data(registry_key, network_spec, public_key = nil)
+    def user_data(registry_key, network_spec, agent_settings, public_key = nil)
       data = {}
 
-      data['registry'] = { 'endpoint' => @registry.endpoint }
       data['server'] = { 'name' => registry_key }
       data['openssh'] = { 'public_key' => public_key } if public_key
       data['networks'] = agent_network_spec(network_spec)
 
       with_dns(network_spec) do |servers|
         data['dns'] = { 'nameserver' => servers }
+      end
+
+      if @stemcell_api_version >= 2 && @cpi_api_version >= 2
+        data.merge!(initial_agent_settings(agent_settings))
+      else
+        data['registry'] = { 'endpoint' => @registry.endpoint }
       end
 
       data
@@ -181,20 +182,12 @@ module Bosh::OpenStackCloud
     end
 
     ##
-    # Generates initial agent settings. These settings will be read by Bosh Agent from Bosh Registry on a target
+    # Generates initial agent settings. These settings will be used by Bosh Agent
     # server. Disk conventions in Bosh Agent for OpenStack are:
     # - system disk: /dev/sda
     # - ephemeral disk: /dev/sdb
     # - persistent disks: /dev/sdc through /dev/sdz
     # As some kernels remap device names (from sd* to vd* or xvd*), Bosh Agent will lookup for the proper device name
-    #
-    # @param [String] uuid Initial uuid
-    # @param [String] agent_id Agent id (will be picked up by agent to
-    #   assume its identity
-    # @param [Hash] network_spec Agent network spec
-    # @param [Hash] environment Environment settings
-    # @param [Boolean] has_ephemeral Has Ephemeral disk?
-    # @return [Hash] Agent settings
     def initial_agent_settings(agent_settings)
       settings = {
         'vm' => {

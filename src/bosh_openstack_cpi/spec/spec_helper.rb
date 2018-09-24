@@ -58,7 +58,7 @@ def mock_registry(endpoint = 'http://registry:3333')
   registry
 end
 
-def mock_cloud(options = nil)
+def mock_cloud(options = nil, cpi_api_version = 1)
   servers = double('servers')
   images = double('images')
   flavors = double('flavors')
@@ -94,7 +94,7 @@ def mock_cloud(options = nil)
 
   yield(fog) if block_given?
 
-  Bosh::OpenStackCloud::Cloud.new(options || mock_cloud_options['properties'])
+  Bosh::OpenStackCloud::Cloud.new(options || mock_cloud_options['properties'], cpi_api_version)
 end
 
 def mock_glance(options = nil)
