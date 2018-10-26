@@ -69,6 +69,12 @@ echo -e "${director_ca_private_key}" > director_ca_private_key
 echo "using bosh CLI version..."
 bosh-go --version
 
+if [ -d ../bosh-release-without-registry ] ; then
+  #  only needed for registry removal
+  rm bosh-release.tgz
+  cp $( find ../bosh-release-without-registry -name "*.tgz" ) bosh-release.tgz
+fi
+
 echo "check bosh deployment interpolation"
 bosh-go int ../bosh-deployment/bosh.yml \
     --var-errs --var-errs-unused \

@@ -7,6 +7,8 @@ image_resource:
 inputs:
   - name: bosh-cpi-src-in
   - name: bosh-release
+  - name: bosh-release-without-registry
+    optional: true
   - name: bosh-cpi-dev-artifacts
   - name: version-semver
   - name: stemcell-director
