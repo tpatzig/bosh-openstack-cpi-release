@@ -48,10 +48,6 @@ def mock_cloud_options(api_version = 2, devstack = false)
   cloud_properties
 end
 
-def make_cloud(options = nil)
-  Bosh::OpenStackCloud::Cloud.new(options || mock_cloud_options['properties'])
-end
-
 def mock_registry(endpoint = 'http://registry:3333')
   registry = double('registry', endpoint: endpoint)
   allow(Bosh::Cpi::RegistryClient).to receive(:new).and_return(registry)

@@ -95,7 +95,7 @@ class IntegrationConfig
         'password' => 'fake',
       },
     }
-    Bosh::OpenStackCloud::Cloud.new(properties)
+    Bosh::OpenStackCloud::Cloud.new(properties, 2)
   end
 
   def create_openstack
