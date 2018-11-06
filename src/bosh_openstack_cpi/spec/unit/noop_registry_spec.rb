@@ -4,6 +4,7 @@ shared_examples 'a registry' do
   it { is_expected.to respond_to(:update_settings).with(2).arguments }
   it { is_expected.to respond_to(:read_settings).with(1).arguments }
   it { is_expected.to respond_to(:delete_settings).with(1).arguments }
+  it { is_expected.to respond_to(:endpoint) }
 end
 
 describe Bosh::OpenStackCloud::NoopRegistry do

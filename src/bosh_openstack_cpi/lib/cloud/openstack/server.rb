@@ -4,15 +4,13 @@ module Bosh::OpenStackCloud
 
     REGISTRY_KEY_TAG = :registry_key
 
-    def initialize(agent_properties, human_readable_vm_names, logger, openstack, registry, use_dhcp, cpi_api_version, stemcell_api_version)
+    def initialize(agent_properties, human_readable_vm_names, logger, openstack, registry, use_dhcp)
       @agent_properties = agent_properties
       @human_readable_vm_names = human_readable_vm_names
       @logger = logger
       @openstack = openstack
       @registry = registry
       @use_dhcp = use_dhcp
-      @cpi_api_version = cpi_api_version
-      @stemcell_api_version = stemcell_api_version
     end
 
     attr_reader :use_dhcp
@@ -157,10 +155,10 @@ module Bosh::OpenStackCloud
         data['dns'] = { 'nameserver' => servers }
       end
 
-      if @stemcell_api_version >= 2 && @cpi_api_version >= 2
-        data.merge!(initial_agent_settings(agent_settings))
-      else
+      if @registry.endpoint
         data['registry'] = { 'endpoint' => @registry.endpoint }
+      else
+        data.merge!(initial_agent_settings(agent_settings))
       end
 
       data
