@@ -29,15 +29,15 @@ describe Bosh::OpenStackCloud::Cloud do
 
       context 'when stemcell API v1 is used' do
         it 'creates a RegistryClient' do
-          cpi = Bosh::OpenStackCloud::Cloud.new(cloud_options['properties'], cpi_api_version)
-          expect(cpi.registry).to be_instance_of(Bosh::Cpi::RegistryClient)
+          registry = Bosh::OpenStackCloud::Cloud.new(cloud_options['properties'], cpi_api_version).registry
+          expect(registry).to be_instance_of(Bosh::Cpi::RegistryClient)
         end
       end
 
       context 'when stemcell API v2 is used' do
         it 'creates a NoopRegistry' do
-          cpi = Bosh::OpenStackCloud::Cloud.new(cloud_options_stemcell_v2['properties'], cpi_api_version)
-          expect(cpi.registry).to be_instance_of(Bosh::OpenStackCloud::NoopRegistry)
+          registry = Bosh::OpenStackCloud::Cloud.new(cloud_options_stemcell_v2['properties'], cpi_api_version).registry
+          expect(registry).to be_instance_of(Bosh::OpenStackCloud::NoopRegistry)
         end
       end
     end
@@ -45,15 +45,15 @@ describe Bosh::OpenStackCloud::Cloud do
     context 'when CPI API v1 is called' do
       context 'when stemcell API v1 is used' do
         it 'creates a RegistryClient' do
-          cpi = Bosh::OpenStackCloud::Cloud.new(cloud_options['properties'], cpi_api_version)
-          expect(cpi.registry).to be_instance_of(Bosh::Cpi::RegistryClient)
+          registry = Bosh::OpenStackCloud::Cloud.new(cloud_options['properties'], cpi_api_version).registry
+          expect(registry).to be_instance_of(Bosh::Cpi::RegistryClient)
         end
       end
 
       context 'when stemcell API v2 is used' do
         it 'creates a RegistryClient' do
-          cpi = Bosh::OpenStackCloud::Cloud.new(cloud_options_stemcell_v2['properties'], cpi_api_version)
-          expect(cpi.registry).to be_instance_of(Bosh::Cpi::RegistryClient)
+          registry = Bosh::OpenStackCloud::Cloud.new(cloud_options_stemcell_v2['properties'], cpi_api_version).registry
+          expect(registry).to be_instance_of(Bosh::Cpi::RegistryClient)
         end
       end
 
