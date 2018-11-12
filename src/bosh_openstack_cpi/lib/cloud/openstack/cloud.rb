@@ -536,7 +536,7 @@ module Bosh::OpenStackCloud
     def registry
       return @registry_instance if @registry_instance
 
-      if @cpi_api_version >= 2 && stemcell_api_version >= 2
+      if cpi_without_registry?
         @registry_instance = Bosh::OpenStackCloud::NoopRegistry.new
       else
         begin
@@ -575,13 +575,15 @@ module Bosh::OpenStackCloud
     end
 
     def human_readable_name?(server, server_id)
-      registry_tag = @openstack.with_openstack(retryable: true) { server.metadata.get(REGISTRY_KEY_TAG) }
-      if registry_tag
-        true
-      else
-        @logger.debug("VM with id '#{server_id}' has no 'registry_key' tag")
-        false
-      end
+      return true if (@human_readable_vm_names && cpi_without_registry?) ||
+                     @openstack.with_openstack(retryable: true) { server.metadata.get(REGISTRY_KEY_TAG) }
+
+      @logger.debug("VM with id '#{server_id}' has no 'registry_key' tag")
+      false
+    end
+
+    def cpi_without_registry?
+      @cpi_api_version >= 2 && stemcell_api_version >= 2
     end
 
     def openstack_volume(disk_id)

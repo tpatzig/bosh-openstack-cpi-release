@@ -1012,7 +1012,7 @@ resources:
     tags: ((worker_tags))
     source:
       uri: https://github.com/cloudfoundry-incubator/bosh-openstack-cpi-release.git
-      branch: update-cpi-api-v2
+      branch: update-cpi-api-v2-rebase
       ignore_paths:
         - releases/bosh-openstack-cpi/**
         - .final_builds/**
@@ -1024,7 +1024,7 @@ resources:
     tags: ((worker_tags))
     source:
       uri: git@github.com:cloudfoundry-incubator/bosh-openstack-cpi-release.git
-      branch: update-cpi-api-v2
+      branch: update-cpi-api-v2-rebase
       private_key: ((github_deployment_key__bosh-openstack-cpi-release))
 
   - name: version-semver

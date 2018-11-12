@@ -115,6 +115,13 @@ describe 'cpi.json.erb' do
 
       expect { cpi_v2_json }.to raise_error Bosh::Template::UnknownProperty
     end
+
+    it 'it does not raise an error if no registry properties are set' do
+      manifest_cpi_v2['registry'] = {}
+
+      expect { cpi_v2_json }.to_not raise_error
+      expect(cpi_v2_json['cloud']['properties']['registry']).to eq(nil)
+    end
   end
 
   describe 'when anti-affinity is configured' do

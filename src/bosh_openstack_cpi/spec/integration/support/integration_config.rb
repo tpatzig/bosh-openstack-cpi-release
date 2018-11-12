@@ -89,11 +89,6 @@ class IntegrationConfig
   def create_cpi(boot_from_volume: false, config_drive: nil, human_readable_vm_names: false, use_nova_networking: false, use_dhcp: true, default_volume_type: nil, request_id: nil)
     properties = {
       'openstack' => openstack_properties(boot_from_volume, config_drive, human_readable_vm_names, use_nova_networking, use_dhcp, default_volume_type),
-      'registry' => {
-        'endpoint' => 'fake',
-        'user' => 'fake',
-        'password' => 'fake',
-      },
     }
     Bosh::OpenStackCloud::Cloud.new(properties, 2)
   end
