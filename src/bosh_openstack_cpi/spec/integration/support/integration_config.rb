@@ -115,6 +115,11 @@ class IntegrationConfig
       'human_readable_vm_names' => human_readable_vm_names,
       'use_nova_networking' => use_nova_networking,
       'connection_options' => @connection_options,
+      'vm' => {
+        'stemcell' => {
+          'api_version' => 2,
+        },
+      },
     }
 
     if @domain
