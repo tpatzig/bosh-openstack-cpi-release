@@ -23,6 +23,8 @@ source bosh-cpi-src-in/ci/tasks/utils.sh
 : ${time_server_2:?}
 : ${DEBUG_BATS:?}
 : ${distro:?}
+: ${bosh_director_cpi_api_version:?}
+: ${stemcell_cpi_api_version:?}
 optional_value bosh_openstack_ca_cert
 optional_value availability_zone
 
@@ -71,19 +73,22 @@ bosh-go --version
 
 OPS_FILES=()
 
-OPS_FILES+=( "-o ../bosh-deployment/misc/powerdns.yml" )
-OPS_FILES+=( "-o ../bosh-deployment/openstack/cpi.yml" )
-OPS_FILES+=( "-o ../bosh-deployment/external-ip-with-registry-not-recommended.yml" )
-OPS_FILES+=( "-o ../bosh-deployment/misc/source-releases/bosh.yml" )
-OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/deployment-configuration.yml" )
-OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/custom-dynamic-networking.yml" )
-OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/timeouts.yml" )
-OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/ntp.yml" )
-if [ -d ../bosh-release-without-registry ] ; then
-  #  only needed for registry removal
+OPS_FILES+=( "--ops-file=../bosh-deployment/misc/powerdns.yml" )
+OPS_FILES+=( "--ops-file=../bosh-deployment/openstack/cpi.yml" )
+OPS_FILES+=( "--ops-file=../bosh-deployment/external-ip-with-registry-not-recommended.yml" )
+OPS_FILES+=( "--ops-file=../bosh-deployment/misc/source-releases/bosh.yml" )
+OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/deployment-configuration.yml" )
+OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/custom-dynamic-networking.yml" )
+OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/timeouts.yml" )
+OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/ntp.yml" )
+
+if [ ${bosh_director_cpi_api_version} = "2" ] ; then
   rm bosh-release.tgz
   cp $( find ../bosh-release-without-registry -name "*.tgz" ) bosh-release.tgz
-  OPS_FILES+=( "-o ../bosh-deployment/remove-registry.yml" )
+fi
+
+if [ ${stemcell_cpi_api_version} = "2" ] && [ ${bosh_director_cpi_api_version} = "2" ]; then
+  OPS_FILES+=( "--ops-file=../bosh-deployment/remove-registry.yml" )
 fi
 
 echo "check bosh deployment interpolation"

@@ -800,6 +800,7 @@ jobs:
         private_key_data:                     ((bosh_private_key))
         distro:                               "ubuntu"
         availability_zone:                    ((availability_zone))
+        stemcell_cpi_api_version:             "1"
         DEBUG_BATS:                           *debug_bats
       <<: *send-failure-email
 
@@ -902,6 +903,7 @@ jobs:
         private_key_data:                     ((bosh_private_key))
         distro:                               "ubuntu"
         availability_zone:                    ((availability_zone))
+        bosh_director_cpi_api_version:        "1"
         DEBUG_BATS:                           *debug_bats
       <<: *send-failure-email
 

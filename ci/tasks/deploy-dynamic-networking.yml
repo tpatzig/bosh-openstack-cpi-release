@@ -40,3 +40,5 @@ params:
   DEBUG_BATS:                          ""
   distro:                              ""
   availability_zone:                   replace-me
+  bosh_director_cpi_api_version:       "2"
+  stemcell_cpi_api_version:            "2"
