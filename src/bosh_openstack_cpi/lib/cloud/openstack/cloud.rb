@@ -765,7 +765,7 @@ module Bosh::OpenStackCloud
             optional('use_nova_networking') => bool,
             optional('vm') => Hash,
           },
-          'registry' => {
+          optional('registry') => {
             'endpoint' => String,
             'user' => String,
             'password' => String,
