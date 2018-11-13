@@ -1,0 +1,13 @@
+---
+
+- type: remove
+  path: /instance_groups/name=bosh/jobs/registry?
+
+- type: remove
+  path: /instance_groups/name=bosh/properties/registry?
+
+- type: remove
+  path: /cloud_provider/ssh_tunnel?
+
+- type: remove
+  path: /variables/registry_password?

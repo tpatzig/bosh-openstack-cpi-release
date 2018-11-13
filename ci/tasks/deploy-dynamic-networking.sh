@@ -69,10 +69,21 @@ echo -e "${director_ca_private_key}" > director_ca_private_key
 echo "using bosh CLI version..."
 bosh-go --version
 
+OPS_FILES=()
+
+OPS_FILES+=( "-o ../bosh-deployment/misc/powerdns.yml" )
+OPS_FILES+=( "-o ../bosh-deployment/openstack/cpi.yml" )
+OPS_FILES+=( "-o ../bosh-deployment/external-ip-with-registry-not-recommended.yml" )
+OPS_FILES+=( "-o ../bosh-deployment/misc/source-releases/bosh.yml" )
+OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/deployment-configuration.yml" )
+OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/custom-dynamic-networking.yml" )
+OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/timeouts.yml" )
+OPS_FILES+=( "-o ../bosh-cpi-src-in/ci/ops_files/ntp.yml" )
 if [ -d ../bosh-release-without-registry ] ; then
   #  only needed for registry removal
   rm bosh-release.tgz
   cp $( find ../bosh-release-without-registry -name "*.tgz" ) bosh-release.tgz
+  OPS_FILES+=( "-o ../bosh-deployment/remove-registry.yml" )
 fi
 
 echo "check bosh deployment interpolation"
@@ -81,14 +92,7 @@ bosh-go int ../bosh-deployment/bosh.yml \
     --vars-env tf \
     --vars-file ./custom-ca.yml \
     --vars-store ./credentials.yml \
-    -o ../bosh-deployment/misc/powerdns.yml \
-    -o ../bosh-deployment/openstack/cpi.yml \
-    -o ../bosh-deployment/external-ip-with-registry-not-recommended.yml \
-    -o ../bosh-deployment/misc/source-releases/bosh.yml \
-    -o ../bosh-cpi-src-in/ci/ops_files/deployment-configuration.yml \
-    -o ../bosh-cpi-src-in/ci/ops_files/custom-dynamic-networking.yml \
-    -o ../bosh-cpi-src-in/ci/ops_files/timeouts.yml \
-    -o ../bosh-cpi-src-in/ci/ops_files/ntp.yml \
+    "${OPS_FILES[@]}" \
     -v auth_url=${openstack_auth_url} \
     -v availability_zone=${availability_zone:-'~'} \
     -v bosh_vcap_password_hash=${bosh_vcap_password_hash} \
