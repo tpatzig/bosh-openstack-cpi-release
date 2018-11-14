@@ -72,6 +72,7 @@ echo "using bosh CLI version..."
 bosh-go --version
 
 OPS_FILES=()
+OPTIONAL_VARIABLES=()
 
 OPS_FILES+=( "--ops-file=../bosh-deployment/misc/powerdns.yml" )
 OPS_FILES+=( "--ops-file=../bosh-deployment/openstack/cpi.yml" )
@@ -88,7 +89,9 @@ if [ ${bosh_director_cpi_api_version} = "2" ] ; then
 fi
 
 if [ ${stemcell_cpi_api_version} = "2" ] && [ ${bosh_director_cpi_api_version} = "2" ]; then
-  OPS_FILES+=( "--ops-file=../bosh-deployment/remove-registry.yml" )
+  OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/remove-registry.yml" )
+else
+  OPTIONAL_VARIABLES+=( "--var-file=private_key=${private_ssh_key_file}" )
 fi
 
 echo "check bosh deployment interpolation"
@@ -117,10 +120,10 @@ bosh-go int ../bosh-deployment/bosh.yml \
     -v openstack_state_timeout=${openstack_state_timeout} \
     -v openstack_username=${openstack_username} \
     -v openstack_write_timeout=${openstack_write_timeout} \
-    --var-file=private_key=${private_ssh_key_file} \
     -v region=null \
     -v time_server_1=${time_server_1} \
-    -v time_server_2=${time_server_2} | tee bosh.yml
+    -v time_server_2=${time_server_2} \
+    "${OPTIONAL_VARIABLES[@]}" | tee bosh.yml
 
 echo "deploying BOSH..."
 bosh-go create-env bosh.yml \

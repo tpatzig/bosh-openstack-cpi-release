@@ -697,6 +697,8 @@ jobs:
         private_key_data:                     ((bosh_private_key))
         distro:                               "ubuntu"
         availability_zone:                    ((availability_zone))
+        bosh_director_cpi_api_version:        "2"
+        stemcell_cpi_api_version:             "2"
         DEBUG_BATS:                           *debug_bats
       <<: *send-failure-email
 
@@ -800,7 +802,7 @@ jobs:
         private_key_data:                     ((bosh_private_key))
         distro:                               "ubuntu"
         availability_zone:                    ((availability_zone))
-        stemcell_cpi_api_version:             "1"
+        bosh_director_cpi_api_version:        "2"
         DEBUG_BATS:                           *debug_bats
       <<: *send-failure-email
 
@@ -903,7 +905,7 @@ jobs:
         private_key_data:                     ((bosh_private_key))
         distro:                               "ubuntu"
         availability_zone:                    ((availability_zone))
-        bosh_director_cpi_api_version:        "1"
+        stemcell_cpi_api_version:             "2"
         DEBUG_BATS:                           *debug_bats
       <<: *send-failure-email
 
@@ -1014,7 +1016,7 @@ resources:
     tags: ((worker_tags))
     source:
       uri: https://github.com/cloudfoundry-incubator/bosh-openstack-cpi-release.git
-      branch: update-cpi-api-v2-rebase
+      branch: update-cpi-api-v2
       ignore_paths:
         - releases/bosh-openstack-cpi/**
         - .final_builds/**
@@ -1026,7 +1028,7 @@ resources:
     tags: ((worker_tags))
     source:
       uri: git@github.com:cloudfoundry-incubator/bosh-openstack-cpi-release.git
-      branch: update-cpi-api-v2-rebase
+      branch: update-cpi-api-v2
       private_key: ((github_deployment_key__bosh-openstack-cpi-release))
 
   - name: version-semver
