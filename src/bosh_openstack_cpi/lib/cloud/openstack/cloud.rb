@@ -545,7 +545,9 @@ module Bosh::OpenStackCloud
           registry_user       = registry_properties.fetch('user')
           registry_password   = registry_properties.fetch('password')
         rescue KeyError => e
-          raise ArgumentError, "Invalid CPI properties. CPI API v1 requires the registry to be configured. Error: #{e.message}"
+          raise ArgumentError, "Invalid CPI properties. Used CPI API version is #{@cpi_api_version} and stemcell "\
+            "version is #{stemcell_api_version}. Since at least one API version is 1, this requires the registry to "\
+            "be configured. Error: #{e.message}"
         end
         @registry_instance = Bosh::Cpi::RegistryClient.new(registry_endpoint, registry_user, registry_password)
       end
