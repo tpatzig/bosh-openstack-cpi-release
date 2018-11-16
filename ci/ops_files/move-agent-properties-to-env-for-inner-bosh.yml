@@ -1,0 +1,8 @@
+- type: remove
+  path: /instance_groups/name=bosh/properties/ntp?
+
+- type: replace
+  path: /instance_groups/name=bosh/properties/agent/env/bosh/ntp?
+  value:
+  - ((time_server_1))
+  - ((time_server_2))
