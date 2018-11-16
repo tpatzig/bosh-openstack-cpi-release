@@ -82,6 +82,7 @@ OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/deployment-configuratio
 OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/custom-dynamic-networking.yml" )
 OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/timeouts.yml" )
 OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/ntp.yml" )
+OPS_FILES+=( "--ops-file=../bosh-cpi-src-in/ci/ops_files/move-agent-properties-to-env.yml" )
 
 if [ ${bosh_director_cpi_api_version} = "2" ] ; then
   rm bosh-release.tgz
