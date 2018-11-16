@@ -13,8 +13,6 @@ describe Bosh::OpenStackCloud::Cloud do
     @cpi_for_stemcell.delete_stemcell(@stemcell_id)
   end
 
-  before { allow(Bosh::Cpi::RegistryClient).to receive(:new).and_return(double('registry').as_null_object) }
-
   let(:disk_metadata) do
     {
       'director' => 'Director',
